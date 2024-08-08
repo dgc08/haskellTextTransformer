@@ -1,4 +1,4 @@
-module Transformer where
+module Transformer(transform, transformerTable) where
 
 import System.Environment (getArgs)
 import System.IO (hGetContents, stdin, hPutStrLn, stderr)
@@ -39,8 +39,10 @@ transform transformer = do
 transformerTable :: (String -> (String -> String)) -> IO()
 transformerTable table = do
   args <- getArgs
-  if length args < 3
+  if length args == 1
+    then do putStr $ table (head args) "Transformer Library Error: No I/O provided\n"
+  else if length args < 3
     then do
-      hPutStrLn stderr "No action/transformer (3rd argument) provided"
-    else do
+      hPutStrLn stderr "Transformer Library Error: No action/transformer (3rd argument) provided"
+  else do
       transform $ table (args !! 2)
