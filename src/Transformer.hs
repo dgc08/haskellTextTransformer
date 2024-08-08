@@ -4,7 +4,7 @@
 module Transformer(transform, transformerTable) where
 
 import System.Environment (getArgs)
-import System.IO (hGetContents, stdin, hPutStrLn, stderr)
+import System.IO (hPutStrLn, stderr)
 import Control.DeepSeq (deepseq)
 
 writeOutput :: String -> String -> IO ()
@@ -19,13 +19,13 @@ transform transformer = do
   args <- getArgs
   if null args || (length args == 1 && head args == "-i")
     then do
-      contents <- hGetContents stdin
+      contents <- getContents
       let input =  contents `deepseq` contents
       putStr $ transformer input
   else if length args >= 2
     then if head args == "-i"
           then do
-            contents <- hGetContents stdin
+            contents <- getContents
             let input =  contents `deepseq` contents
             let transformed = transformer input
             writeOutput (args !! 1) transformed
@@ -34,7 +34,7 @@ transform transformer = do
             let transformed = transformer input
             writeOutput (args !! 1) transformed
   else do
-    contents <- hGetContents stdin
+    contents <- getContents
     let input =  contents `deepseq` contents
     let transformed = transformer input
     writeOutput "-o" transformed
