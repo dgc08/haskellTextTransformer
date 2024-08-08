@@ -1,3 +1,6 @@
+-- This file is part of the Text Transformer Library (https://github.com/dgc08/haskellTextTransformer)
+-- It is distributed under the MIT license (see https://github.com/dgc08/haskellTextTransformer/blob/master/LICENSE)
+
 module Transformer(transform, transformerTable) where
 
 import System.Environment (getArgs)
