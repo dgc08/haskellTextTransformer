@@ -1,9 +1,8 @@
 module Transformer where
 
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Char8 as BSC
 import System.Environment (getArgs)
 import System.IO (hGetContents, stdin, hPutStrLn, stderr)
+import Control.DeepSeq (deepseq)
 
 writeOutput :: String -> String -> IO ()
 writeOutput dest =
@@ -17,21 +16,24 @@ transform transformer = do
   args <- getArgs
   if null args || (length args == 1 && head args == "-i")
     then do
-      input <- BSC.hGetContents stdin
-      putStr (transformer (BSC.unpack input))
+      contents <- hGetContents stdin
+      let input =  contents `deepseq` contents
+      putStr $ transformer input
   else if length args >= 2
     then if head args == "-i"
           then do
-            input <- BSC.hGetContents stdin
-            let transformed = transformer (BSC.unpack input)
+            contents <- hGetContents stdin
+            let input =  contents `deepseq` contents
+            let transformed = transformer input
             writeOutput (args !! 1) transformed
           else do
-            input <- BSC.readFile (head args)
-            let transformed = transformer (BSC.unpack input)
+            input <- readFile $ head args
+            let transformed = transformer input
             writeOutput (args !! 1) transformed
   else do
-    input <- BSC.hGetContents stdin
-    let transformed = transformer (BSC.unpack input)
+    contents <- hGetContents stdin
+    let input =  contents `deepseq` contents
+    let transformed = transformer input
     writeOutput "-o" transformed
 
 transformerTable :: (String -> (String -> String)) -> IO()
